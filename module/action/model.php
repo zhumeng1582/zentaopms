@@ -4,7 +4,7 @@ declare(strict_types=1);
 /**
  * The model file of action module of ZenTaoPMS.
  *
- * @copyright   Copyright 2009-2023 禅道软件（青岛）有限公司(ZenTao Software (Qingdao) Co., Ltd. www.cnezsoft.com)
+ * @copyright   Copyright 2009-2023 禅道软件（青岛）集团有限公司(ZenTao Software (Qingdao) Co., Ltd. www.cnezsoft.com)
  * @license     ZPL(http://zpl.pub/page/zplv12.html) or AGPL(https://www.gnu.org/licenses/agpl-3.0.en.html)
  * @author      Chunsheng Wang <chunsheng@cnezsoft.com>
  * @package     action
@@ -366,7 +366,7 @@ class actionModel extends model
             if(isset($fieldList[$history->old])) $history->oldValue = $fieldList[$history->old];
             if(isset($fieldList[$history->new])) $history->newValue = $fieldList[$history->new];
         }
-         
+
         /* 如果是升级, 检查oldValue和newValue字段是否存在。以防止从老版本升级的时候，而这两个字段不存在，导致升级失败。 */
         if(!empty($this->app->upgrading) && (isset($history->oldValue) || isset($history->newValue)))
         {
@@ -579,16 +579,16 @@ class actionModel extends model
         $trashQuery = $this->session->trashQuery;
         $trashQuery = str_replace(array('`objectID`', '`actor`', '`date`'), array('t1.`objectID`', 't1.`actor`', 't1.`date`'), $trashQuery);
         if($nameField) $trashQuery = preg_replace("/`objectName`/", $nameField, $trashQuery);
-        $queryFields = $objectType != 'pipeline' ? "t1.*, {$nameField} AS objectName" : 't1.*, t1.objectType AS type, t2.name AS objectName, t2.type AS objectType';
+        $queryFields = $objectType != 'pipeline' ? "t1.*, {$nameField} AS objectName" : 't1.*, t1.`objectType` AS type, t2.name AS objectName, t2.type AS objectType';
 
         $trashes = $this->dao->select($queryFields)->from(TABLE_ACTION)->alias('t1')
-            ->leftJoin($table)->alias('t2')->on('t1.objectID=t2.id')
+            ->leftJoin($table)->alias('t2')->on('t1.`objectID`=t2.id')
             ->where('t1.action')->eq('deleted')
             ->andWhere($trashQuery)
             ->andWhere('t1.extra')->eq($extra)
             ->andWhere('t1.vision')->eq($this->config->vision)
             ->andWhere('objectType')->notIn($this->config->action->hiddenTrashObjects)
-            ->beginIF($objectType != 'pipeline' && $objectType != 'all')->andWhere('t1.objectType')->eq($objectType)->fi()
+            ->beginIF($objectType != 'pipeline' && $objectType != 'all')->andWhere('t1.`objectType`')->eq($objectType)->fi()
 
             ->beginIF($objectType == 'pipeline')
             ->andWhere('(t2.type')->eq('gitlab')
@@ -654,8 +654,9 @@ class actionModel extends model
         foreach($changes as $change)
         {
             $change = is_array($change) ? json_decode(json_encode($change)) : $change;
-            $change->action = $actionID;
+            if(!is_object($change)) continue;
 
+            $change->action = $actionID;
             $change = $this->processHistory($change);
             $this->dao->insert(TABLE_HISTORY)->data($change)->exec();
             if(dao::isError()) return false;
@@ -1612,7 +1613,7 @@ class actionModel extends model
             {
                 $moduleName = 'execution';
                 $methodName = 'gantt';
-                $params     = "executionID={$ganttversion->execution}&type={$ganttversion->category}&orderBy=id_asc&productID={$ganttversion->product}&bySearch=0&param=&version={$ganttversion->id}";
+                $params     = "executionID={$ganttversion->execution}&type={$ganttversion->category}&orderBy=id_asc&productID={$ganttversion->product}&bysearch=0&param=&version={$ganttversion->id}";
             }
         }
 
@@ -1624,6 +1625,7 @@ class actionModel extends model
         if(empty($action->hasLink) && $this->actionTao->checkActionClickable($action, $deptUsers, $moduleName, $methodName)) $action->objectLink = helper::createLink($moduleName, $methodName, $params);
 
         if(!empty($action->objectLink) && !empty($project) && empty($project->multiple)) $action->objectLink .= '#app=project';  // Set app for no multiple project.
+        if(!empty($action->objectLink) && $action->objectType == 'productplan' && isset($shadowProducts[$action->product])) $action->objectLink .= '#app=project';
         if(!empty($action->objectLink) && $action->objectType == 'meeting')    $action->objectLink .= '#app=' . $this->app->tab; // Set app for meeting by open tab.
         if($this->config->vision == 'lite' && $action->objectType == 'module') $action->objectLink .= '#app=project';
         if($action->objectType == 'nc' && !empty($action->execution)) $action->objectLink .= '#app=execution';
@@ -2579,7 +2581,7 @@ class actionModel extends model
             if($task->parent > 0)
             {
                 $parentConsumed = $this->dao->select('consumed')->from(TABLE_TASK)->where('id')->eq($task->parent)->fetch('consumed');
-                if($parentConsumed)
+                if((float)$parentConsumed > 0)
                 {
                     $this->dao->update(TABLE_TASK)->set('parent')->eq('0')->set('path')->eq(",{$task->id},")->where('id')->eq($task->id)->exec();
                 }

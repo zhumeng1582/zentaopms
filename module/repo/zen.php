@@ -3,7 +3,7 @@ declare(strict_types=1);
 /**
  * The zen file of repo module of ZenTaoPMS.
  *
- * @copyright   Copyright 2009-2023 禅道软件（青岛）有限公司(ZenTao Software (Qingdao) Co., Ltd. www.zentao.net)
+ * @copyright   Copyright 2009-2023 禅道软件（青岛）集团有限公司(ZenTao Software (Qingdao) Co., Ltd. www.zentao.net)
  * @license     ZPL(https://zpl.pub/page/zplv12.html) or AGPL(https://www.gnu.org/licenses/agpl-3.0.en.html)
  * @author      Zeng Gang<zenggang@easycorp.ltd>
  * @package     repo
@@ -876,7 +876,7 @@ class repoZen extends repo
         session_start();
         $this->config->repo->search['params']['product']['values']  = $products;
         $this->config->repo->search['params']['projects']['values'] = $projects;
-        $this->config->repo->search['actionURL']   = $this->createLink('repo', 'maintain', "objectID={$objectID}&orderBy={$orderBy}&recPerPage={$recPerPage}&pageID={$pageID}&type=bySearch&param=myQueryID");
+        $this->config->repo->search['actionURL']   = $this->createLink('repo', 'maintain', "objectID={$objectID}&orderBy={$orderBy}&recPerPage={$recPerPage}&pageID={$pageID}&type=bysearch&param=myQueryID");
         $this->config->repo->search['queryID']     = $param;
         $this->config->repo->search['onMenuBar']   = 'yes';
         $this->loadModel('search')->setSearchParams($this->config->repo->search);
@@ -970,7 +970,7 @@ class repoZen extends repo
         unset($this->lang->story->statusList['closed']);
         $storyStatusList = $this->lang->story->statusList;
 
-        $this->config->product->search['actionURL']                   = $this->createLink('repo', 'linkStory', "repoID=$repoID&revision=$revision&browseType=bySearch&queryID=myQueryID");
+        $this->config->product->search['actionURL']                   = $this->createLink('repo', 'linkStory', "repoID=$repoID&revision=$revision&browseType=bysearch&queryID=myQueryID");
         $this->config->product->search['queryID']                     = $queryID;
         $this->config->product->search['style']                       = 'simple';
         $this->config->product->search['params']['plan']['values']    = $this->loadModel('productplan')->getForProducts(array_keys($products));
@@ -1019,7 +1019,7 @@ class repoZen extends repo
     {
         $linkedStories = $this->repo->getRelationByCommit($repoID, $revision, 'story');
         $allStories    = array();
-        if($browseType == 'bySearch')
+        if($browseType == 'bysearch')
         {
             foreach($products as $productID => $product)
             {
@@ -1078,7 +1078,7 @@ class repoZen extends repo
     {
         $productIds = array_keys($products);
         $this->config->bug->search['params']['status']['values']        = array_slice($this->lang->bug->statusList, 1, 1);
-        $this->config->bug->search['actionURL']                         = $this->createLink('repo', 'linkBug', "repoID=$repoID&revision=$revision&browseType=bySearch&queryID=myQueryID");
+        $this->config->bug->search['actionURL']                         = $this->createLink('repo', 'linkBug', "repoID=$repoID&revision=$revision&browseType=bysearch&queryID=myQueryID");
         $this->config->bug->search['queryID']                           = $queryID;
         $this->config->bug->search['style']                             = 'simple';
         $this->config->bug->search['params']['plan']['values']          = $this->loadModel('productplan')->getForProducts($productIds);
@@ -1123,7 +1123,7 @@ class repoZen extends repo
     {
         $linkedBugs = $this->repo->getRelationByCommit($repoID, $revision, 'bug');
         $allBugs    = array();
-        if($browseType == 'bySearch')
+        if($browseType == 'bysearch')
         {
                 $allBugs = $this->loadModel('bug')->getBySearch('bug', array_keys($products), 0, 0, 0, $queryID, implode(',', array_keys($linkedBugs)), $orderBy);
                 foreach($allBugs as $bugID => $bug)
@@ -1160,7 +1160,7 @@ class repoZen extends repo
      */
     protected function buildTaskSearchForm(int $repoID, string $revision, string $browseType, int $queryID, array $modules, array $executionPairs): void
     {
-        $this->config->execution->search['actionURL']                     = $this->createLink('repo', 'linkTask', "repoID=$repoID&revision=$revision&browseType=bySearch&queryID=myQueryID", '', true);
+        $this->config->execution->search['actionURL']                     = $this->createLink('repo', 'linkTask', "repoID=$repoID&revision=$revision&browseType=bysearch&queryID=myQueryID", '', true);
         $this->config->execution->search['queryID']                       = $queryID;
         $this->config->execution->search['style']                         = 'simple';
         $this->config->execution->search['params']['module']['values']    = $modules;
@@ -1393,7 +1393,9 @@ class repoZen extends repo
                 elseif($this->strposAry($lastLine, $this->config->repo->repoSyncLog->total) !== false)
                 {
                     $logContent = file_get_contents($logFile);
-                    if($this->strposAry($logContent, $this->config->repo->repoSyncLog->finishCount) !== false and $this->strposAry($logContent, $this->config->repo->repoSyncLog->finishCompress) !== false)
+                    $countFinished = $this->strposAry($logContent, $this->config->repo->repoSyncLog->finishCount) !== false || preg_match("/Counting objects:\s*(?:\d+%|\d+,\s*done\.)/i", $logContent);
+                    $compressFinished = $this->strposAry($logContent, $this->config->repo->repoSyncLog->finishCompress) !== false;
+                    if($countFinished and $compressFinished)
                     {
                         @unlink($logFile);
                     }

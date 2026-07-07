@@ -3,7 +3,7 @@ declare(strict_types=1);
 /**
  * The control file of host of ZenTaoPMS.
  *
- * @copyright   Copyright 2009-2023 禅道软件（青岛）有限公司(ZenTao Software (Qingdao) Co., Ltd. www.cnezsoft.com)
+ * @copyright   Copyright 2009-2023 禅道软件（青岛）集团有限公司(ZenTao Software (Qingdao) Co., Ltd. www.cnezsoft.com)
  * @license     ZPL(http://zpl.pub/page/zplv12.html) or AGPL(https://www.gnu.org/licenses/agpl-3.0.en.html)
  * @author      Jiangxiu Peng <pengjiangxiu@cnezsoft.com>
  * @package     host
@@ -36,7 +36,7 @@ class host extends control
 
         /* Build the search form. */
         $param     = (int)$param;
-        $actionURL = $this->createLink('host', 'browse', "browseType=bySearch&queryID=myQueryID");
+        $actionURL = $this->createLink('host', 'browse', "browseType=bysearch&queryID=myQueryID");
         $this->config->host->search['actionURL'] = $actionURL;
         $this->config->host->search['queryID']   = $param;
         $this->config->host->search['onMenuBar'] = 'no';

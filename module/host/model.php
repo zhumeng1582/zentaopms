@@ -3,7 +3,7 @@ declare(strict_types=1);
 /**
  * The model file of host module of ZenTaoPMS.
  *
- * @copyright   Copyright 2009-2023 禅道软件（青岛）有限公司(ZenTao Software (Qingdao) Co., Ltd. www.cnezsoft.com)
+ * @copyright   Copyright 2009-2023 禅道软件（青岛）集团有限公司(ZenTao Software (Qingdao) Co., Ltd. www.cnezsoft.com)
  * @license     ZPL(http://zpl.pub/page/zplv12.html) or AGPL(https://www.gnu.org/licenses/agpl-3.0.en.html)
  * @author      Jiangxiu Peng <pengjiangxiu@cnezsoft.com>
  * @package     module
@@ -185,11 +185,11 @@ class hostModel extends model
 
         /* Get host list. */
         $stmt = $this->dao->select('t1.id,t1.id as hostID,t1.name,t2.id as roomID,t2.city,t2.name as roomName,t1.extranet')->from(TABLE_HOST)->alias('t1')
-            ->leftJoin(TABLE_SERVERROOM)->alias('t2')->on('t1.serverRoom=t2.id')
+            ->leftJoin(TABLE_SERVERROOM)->alias('t2')->on('t1.`serverRoom`=t2.id')
             ->where('t1.deleted')->eq(0)
             ->andWhere('t1.type')->eq('normal')
             ->andWhere('t2.deleted')->eq(0)
-            ->andWhere('t1.serverRoom')->ne(0)
+            ->andWhere('t1.`serverRoom`')->ne(0)
             ->orderBy('t2.city,t2.id,t1.id')
             ->query();
 

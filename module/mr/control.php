@@ -3,7 +3,7 @@ declare(strict_types=1);
 /**
  * The control file of mr module of ZenTaoPMS.
  *
- * @copyright   Copyright 2009-2023 禅道软件（青岛）有限公司(ZenTao Software (Qingdao) Co., Ltd. www.zentao.net)
+ * @copyright   Copyright 2009-2023 禅道软件（青岛）集团有限公司(ZenTao Software (Qingdao) Co., Ltd. www.zentao.net)
  * @license     ZPL(https://zpl.pub/page/zplv12.html) or AGPL(https://www.gnu.org/licenses/agpl-3.0.en.html)
  * @author      Yanyi Cao <caoyanyi@easycorp.ltd>
  * @package     mr
@@ -595,13 +595,13 @@ class mr extends control
         $pager = new pager($recTotal, $recPerPage, $pageID);
 
         /* Build search form. */
-        $queryID = ($browseType == 'bySearch') ? (int) $param : 0;
+        $queryID = ($browseType == 'bysearch') ? (int) $param : 0;
         $this->mrZen->buildLinkStorySearchForm($MRID, $repoID, $orderBy, $queryID);
 
         $repo      = $this->loadModel('repo')->fetchByID($repoID);
         $productID = $repo ? $repo->product : 0;
         $linkedStories = $this->mr->getLinkList($MRID, 'story');
-        if($browseType == 'bySearch')
+        if($browseType == 'bysearch')
         {
             $this->session->set('repoID', $repoID);
             $allStories = $this->story->getBySearch('all', 0, $queryID, $orderBy, 0, 'story', array_keys($linkedStories), '', $pager);
@@ -662,7 +662,7 @@ class mr extends control
         $productIdList = $repo ? explode(',', trim($repo->product, ',')) : 0;
 
         $linkedBugs = $this->mr->getLinkList($MRID, 'bug');
-        if($browseType == 'bySearch')
+        if($browseType == 'bysearch')
         {
             $allBugs = $this->bug->getBySearch('bug', $productIdList, 0, 0, 0, $queryID, implode(',', array_keys($linkedBugs)), $orderBy, $pager);
         }

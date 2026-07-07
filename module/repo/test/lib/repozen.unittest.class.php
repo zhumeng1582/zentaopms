@@ -106,6 +106,48 @@ class repoZenTest
     }
 
     /**
+     * Test buildEditForm method.
+     *
+     * @param  int $repoID
+     * @param  int $objectID
+     * @access public
+     * @return mixed
+     */
+    public function buildEditFormTest(int $repoID, int $objectID)
+    {
+        $repo = $this->objectModel->getByID($repoID);
+        if(empty($repo)) return false;
+
+        $repo->client = trim($repo->client, '"');
+
+        $project = null;
+        if(in_array(strtolower($repo->SCM), $this->objectModel->config->repo->gitServiceList))
+        {
+            $project           = new stdclass();
+            $project->id       = $repo->serviceProject;
+            $project->name     = $repo->name;
+            $project->web_url  = $repo->path;
+        }
+
+        $products           = $this->objectModel->loadModel('product')->getPairs('', 0, '', 'all');
+        $linkedProducts     = $this->objectModel->loadModel('product')->getByIdList(explode(',', $repo->product));
+        $linkedProductPairs = empty($linkedProducts) ? array() : array_combine(array_keys($linkedProducts), helper::arrayColumn($linkedProducts, 'name'));
+        $products           = $products + $linkedProductPairs;
+
+        return array(
+            'title'           => $this->objectModel->lang->repo->common . $this->objectModel->lang->hyphen . $this->objectModel->lang->repo->edit,
+            'repoID'          => $repoID,
+            'objectID'        => $objectID,
+            'repoName'        => $repo->name,
+            'client'          => $repo->client,
+            'projectName'     => $project ? $project->name : '',
+            'productCount'    => count($products),
+            'projectCount'    => count($this->objectModel->filterProject(explode(',', $repo->product), explode(',', $repo->projects))),
+            'serviceHostCount'=> count($this->objectModel->loadModel('pipeline')->getPairs($repo->SCM))
+        );
+    }
+
+    /**
      * Test updateLastCommit method.
      *
      * @param  object $repo
@@ -232,7 +274,7 @@ class repoZenTest
 
         // 构建搜索配置
         $searchConfig = array();
-        $searchConfig['actionURL'] = helper::createLink('repo', 'linkStory', "repoID=$repoID&revision=$revision&browseType=bySearch&queryID=myQueryID");
+        $searchConfig['actionURL'] = helper::createLink('repo', 'linkStory', "repoID=$repoID&revision=$revision&browseType=bysearch&queryID=myQueryID");
         $searchConfig['queryID'] = $queryID;
         $searchConfig['style'] = 'simple';
 
@@ -325,7 +367,7 @@ class repoZenTest
         $mockStory3->status = 'active';
         $mockStory3->isParent = '1';
 
-        if($browseType == 'bySearch')
+        if($browseType == 'bysearch')
         {
             // 搜索模式
             foreach($products as $productID => $product)
@@ -418,7 +460,7 @@ class repoZenTest
 
         // 构建搜索配置
         $searchConfig = array();
-        $searchConfig['actionURL'] = helper::createLink('repo', 'linkBug', "repoID=$repoID&revision=$revision&browseType=bySearch&queryID=myQueryID");
+        $searchConfig['actionURL'] = helper::createLink('repo', 'linkBug', "repoID=$repoID&revision=$revision&browseType=bysearch&queryID=myQueryID");
         $searchConfig['queryID'] = $queryID;
         $searchConfig['style'] = 'simple';
 
@@ -532,7 +574,7 @@ class repoZenTest
         $mockBug3->product = 1;
         $mockBug3->status = 'closed';
 
-        if($browseType == 'bySearch')
+        if($browseType == 'bysearch')
         {
             // 搜索模式
             $allBugs = array($mockBug1, $mockBug2, $mockBug3);
@@ -608,7 +650,7 @@ class repoZenTest
 
         // 构建搜索配置
         $searchConfig = array();
-        $searchConfig['actionURL'] = helper::createLink('repo', 'linkTask', "repoID=$repoID&revision=$revision&browseType=bySearch&queryID=myQueryID", '', true);
+        $searchConfig['actionURL'] = helper::createLink('repo', 'linkTask', "repoID=$repoID&revision=$revision&browseType=bysearch&queryID=myQueryID", '', true);
         $searchConfig['queryID'] = $queryID;
         $searchConfig['style'] = 'simple';
 

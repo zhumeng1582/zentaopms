@@ -4,7 +4,7 @@ declare(strict_types=1);
 /**
  * The model file of mr module of ZenTaoPMS.
  *
- * @copyright   Copyright 2009-2023 禅道软件（青岛）有限公司(ZenTao Software (Qingdao) Co., Ltd. www.cnezsoft.com)
+ * @copyright   Copyright 2009-2023 禅道软件（青岛）集团有限公司(ZenTao Software (Qingdao) Co., Ltd. www.cnezsoft.com)
  * @license     ZPL(http://zpl.pub/page/zplv12.html) or AGPL(https://www.gnu.org/licenses/agpl-3.0.en.html)
  * @author      dingguodong <dingguodong@easycorp.ltd>
  * @package     mr
@@ -976,11 +976,11 @@ class mrModel extends model
         if($type == 'task') $orderBy = str_replace('title_', 'name_', $orderBy);
 
         return $this->dao->select('t1.*')->from($this->config->objectTables[$type])->alias('t1')
-            ->leftJoin(TABLE_RELATION)->alias('t2')->on('t1.id=t2.BID')
+            ->leftJoin(TABLE_RELATION)->alias('t2')->on('t1.id=t2.`BID`')
             ->where('t2.relation')->eq('interrated')
-            ->andWhere('t2.AType')->eq($this->moduleName)
-            ->andWhere('t2.AID')->eq($MRID)
-            ->andWhere('t2.BType')->eq($type)
+            ->andWhere('t2.`AType`')->eq($this->moduleName)
+            ->andWhere('t2.`AID`')->eq($MRID)
+            ->andWhere('t2.`BType`')->eq($type)
             ->andWhere('t1.deleted')->eq(0)
             ->orderBy($orderBy)
             ->page($pager)
@@ -1001,10 +1001,10 @@ class mrModel extends model
     {
         if(!$module) $module = $this->moduleName;
         return $this->dao->select("t2.id,t2.title,t2.status")->from(TABLE_RELATION)->alias('t1')
-            ->leftJoin(TABLE_MR)->alias('t2')->on('t1.AID = t2.id')
-            ->where('t1.AType')->eq($module)
-            ->andWhere('t1.BType')->eq($objectType)
-            ->andWhere('t1.BID')->eq($objectID)
+            ->leftJoin(TABLE_MR)->alias('t2')->on('t1.`AID` = t2.id')
+            ->where('t1.`AType`')->eq($module)
+            ->andWhere('t1.`BType`')->eq($objectType)
+            ->andWhere('t1.`BID`')->eq($objectID)
             ->andWhere('t2.id')->ne(0)
             ->fetchAll('id');
     }

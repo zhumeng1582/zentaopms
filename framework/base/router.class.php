@@ -1212,7 +1212,11 @@ class baseRouter
             $savePath = $this->getTmpRoot() . ($apiMode ? 'apisession' : 'session');
             if(!is_dir($savePath)) mkdir($savePath, 0777, true);
 
-            if(is_writable($savePath))
+            /*
+             * API token auth must read from the dedicated apisession directory even when the
+             * current process cannot write there. Read access is enough to restore the user.
+             */
+            if(is_writable($savePath) || ($apiMode && is_readable($savePath)))
             {
                 session_save_path($savePath);
 
@@ -3525,6 +3529,27 @@ class baseRouter
         if(!empty($this->cache)) $this->cache->clear();
 
         return true;
+    }
+
+    /**
+     * 清理临时目录。
+     * Clean the tmp dirs.
+     *
+     * @access public
+     * @return void
+     */
+    public function cleanTmpDirs()
+    {
+        $zfile   = $this->loadClass('zfile');
+        $tmpRoot = $this->getTmpRoot();
+        foreach(['model', 'zen', 'tao'] as $dir)
+        {
+            foreach(glob($tmpRoot . DS . $dir . DS . '*') as $file)
+            {
+                if(is_file($file)) $zfile->removeFile($file);
+                if(is_dir($file))  $zfile->removeDir($file);
+            }
+        }
     }
 }
 

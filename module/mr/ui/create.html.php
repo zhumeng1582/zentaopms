@@ -2,7 +2,7 @@
 declare(strict_types=1);
 /**
  * The create view file of mr module of ZenTaoPMS.
- * @copyright   Copyright 2009-2023 禅道软件（青岛）有限公司(ZenTao Software (Qingdao) Co., Ltd. www.zentao.net)
+ * @copyright   Copyright 2009-2023 禅道软件（青岛）集团有限公司(ZenTao Software (Qingdao) Co., Ltd. www.zentao.net)
  * @license     ZPL(https://zpl.pub/page/zplv12.html) or AGPL(https://www.gnu.org/licenses/agpl-3.0.en.html)
  * @author      Zeng Gang<zenggang@easycorp.ltd>
  * @package     mr
@@ -63,12 +63,12 @@ formPanel
     formGroup
     (
         set::width('1/2'),
-        set::readonly(true),
+        set::disabled(true),
         set::label($lang->repo->common),
         set::name('sourceProject'),
         set::id('sourceProject'),
         set::items($projectItem),
-        set::value($repo->id),
+        set::value(key($projectItem)),
         setClass(count($repoPairs) > 1 ? 'hidden' : '')
     ),
     formGroup
@@ -77,7 +77,7 @@ formPanel
         set::name('targetProject'),
         set::id('targetProject'),
         set::items($projectItem),
-        set::value($repo->id)
+        set::value(key($projectItem))
     ),
     formRow
     (

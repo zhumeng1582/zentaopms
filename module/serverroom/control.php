@@ -3,7 +3,7 @@ declare(strict_types=1);
 /**
  * The control file of serverroom of ZenTaoPMS.
  *
- * @copyright   Copyright 2009-2023 禅道软件（青岛）有限公司(ZenTao Software (Qingdao) Co., Ltd. www.cnezsoft.com)
+ * @copyright   Copyright 2009-2023 禅道软件（青岛）集团有限公司(ZenTao Software (Qingdao) Co., Ltd. www.cnezsoft.com)
  * @license     ZPL(http://zpl.pub/page/zplv12.html) or AGPL(https://www.gnu.org/licenses/agpl-3.0.en.html)
  * @author      Jiangxiu Peng <pengjiangxiu@cnezsoft.com>
  * @package     serverroom
@@ -35,7 +35,7 @@ class serverroom extends control
         $serverRoomList = $this->serverroom->getList($browseType, $param, $orderBy, $pager);
 
         /* Build the search form. */
-        $actionURL = $this->createLink('serverroom', 'browse', "browseType=bySearch&queryID=myQueryID");
+        $actionURL = $this->createLink('serverroom', 'browse', "browseType=bysearch&queryID=myQueryID");
         $this->config->serverroom->search['actionURL'] = $actionURL;
         $this->config->serverroom->search['queryID']   = $param;
         $this->config->serverroom->search['onMenuBar'] = 'no';
