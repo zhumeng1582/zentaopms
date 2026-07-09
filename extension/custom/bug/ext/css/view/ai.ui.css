@@ -1,0 +1,18 @@
+.zentao-ai-toolbar {margin-bottom: 12px;}
+.zentao-ai-panel {
+  margin: 0 0 12px;
+  padding: 12px 16px;
+  border: 1px solid #d8dee9;
+  border-radius: 4px;
+  background: #fff;
+}
+.zentao-ai-panel-title {
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+.zentao-ai-panel-body {
+  line-height: 1.6;
+}
+.zentao-ai-panel-body .muted {
+  color: #6b7280;
+}
