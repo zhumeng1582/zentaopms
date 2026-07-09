@@ -1100,6 +1100,31 @@ $lang->resource->bug->batchChangePlan    = 'batchChangePlan';
 $lang->resource->bug->createBranch       = 'codeBranch';
 $lang->resource->bug->unlinkBranch       = 'unlinkBranch';
 
+/* Feedback. */
+if(!isset($lang->feedback)) $lang->feedback = new stdclass();
+if(!isset($lang->feedback->methodOrder)) $lang->feedback->methodOrder = array();
+$lang->resource->feedback = new stdclass();
+$lang->resource->feedback->index          = 'browse';
+$lang->resource->feedback->admin          = 'browse';
+$lang->resource->feedback->browse         = 'browse';
+$lang->resource->feedback->create         = 'create';
+$lang->resource->feedback->view           = 'view';
+$lang->resource->feedback->edit           = 'edit';
+$lang->resource->feedback->assignTo       = 'assignAction';
+$lang->resource->feedback->close          = 'closeAction';
+$lang->resource->feedback->delete         = 'delete';
+$lang->resource->feedback->ajaxGetModules = 'browse';
+
+$lang->feedback->methodOrder[0]  = 'index';
+$lang->feedback->methodOrder[5]  = 'admin';
+$lang->feedback->methodOrder[10] = 'browse';
+$lang->feedback->methodOrder[15] = 'create';
+$lang->feedback->methodOrder[20] = 'view';
+$lang->feedback->methodOrder[25] = 'edit';
+$lang->feedback->methodOrder[30] = 'assignTo';
+$lang->feedback->methodOrder[35] = 'close';
+$lang->feedback->methodOrder[40] = 'delete';
+
 $lang->bug->methodOrder[0]   = 'index';
 $lang->bug->methodOrder[5]   = 'browse';
 $lang->bug->methodOrder[10]  = 'create';

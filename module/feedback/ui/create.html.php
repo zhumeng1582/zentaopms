@@ -1,0 +1,126 @@
+<?php
+declare(strict_types=1);
+
+namespace zin;
+
+formPanel
+(
+    set::title($lang->feedback->create),
+    set::back('GLOBAL'),
+    set::backUrl(helper::createLink('feedback', 'browse')),
+    set::labelWidth('120px'),
+    set::submitBtnText($lang->save),
+    formRow
+    (
+        formGroup
+        (
+            set::width('1/2'),
+            set::name('product'),
+            set::label($lang->feedback->product),
+            set::control('picker'),
+            set::items($products),
+            set::value($productID),
+            set::required(true)
+        ),
+        formGroup
+        (
+            set::width('1/2'),
+            set::name('module'),
+            set::label($lang->feedback->module),
+            set::control('picker'),
+            set::items($modules),
+            set::value(0)
+        )
+    ),
+    formRow
+    (
+        formGroup
+        (
+            set::width('1/2'),
+            set::name('type'),
+            set::label($lang->feedback->type),
+            set::control('picker'),
+            set::items($lang->feedback->typeList),
+            set::value('requirement')
+        ),
+        formGroup
+        (
+            set::width('1/2'),
+            set::name('pri'),
+            set::label($lang->feedback->pri),
+            set::control('picker'),
+            set::items($lang->feedback->priList),
+            set::value(3)
+        )
+    ),
+    formGroup
+    (
+        set::name('title'),
+        set::label($lang->feedback->title),
+        set::required(true)
+    ),
+    formGroup
+    (
+        set::label($lang->feedback->public),
+        checkbox(set::name('public'), set::value('on'), set::checked(true), set::text($lang->feedback->public))
+    ),
+    formGroup
+    (
+        set::label($lang->feedback->desc),
+        editor(set::name('desc'), set::rows('8'), set::placeholder('可以在这里粘贴文字、错误信息和截图说明。'))
+    ),
+    formRow
+    (
+        formGroup
+        (
+            set::width('1/2'),
+            set::name('assignedTo'),
+            set::label($lang->feedback->assignedTo),
+            set::control('picker'),
+            set::items(array('' => '') + $users)
+        ),
+        formGroup
+        (
+            set::width('1/2'),
+            set::name('feedbackBy'),
+            set::label($lang->feedback->feedbackBy)
+        )
+    ),
+    formRow
+    (
+        formGroup
+        (
+            set::width('1/2'),
+            set::name('source'),
+            set::label($lang->feedback->source)
+        ),
+        formGroup
+        (
+            set::width('1/2'),
+            set::name('notifyEmail'),
+            set::label($lang->feedback->notifyEmail)
+        )
+    ),
+    formGroup
+    (
+        set::label($lang->feedback->mailto),
+        mailto(set::items($users))
+    ),
+    formGroup
+    (
+        set::name('keywords'),
+        set::label($lang->feedback->keywords)
+    ),
+    formGroup
+    (
+        set::label($lang->feedback->files),
+        fileSelector()
+    ),
+    formGroup
+    (
+        set::label($lang->feedback->notify),
+        checkbox(set::name('notify'), set::value('on'), set::checked(true), set::text($lang->feedback->notify))
+    )
+);
+
+render();

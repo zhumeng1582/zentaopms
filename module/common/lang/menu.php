@@ -9,6 +9,7 @@ $lang->navIcons['qa']        = "<i class='icon icon-test'></i>";
 $lang->navIcons['devops']    = "<i class='icon icon-devops'></i>";
 $lang->navIcons['kanban']    = "<i class='icon icon-kanban'></i>";
 $lang->navIcons['doc']       = "<i class='icon icon-doc'></i>";
+$lang->navIcons['feedback']  = "<i class='icon icon-feedback'></i>";
 $lang->navIcons['aiapp']     = "<i class='icon icon-ai'></i>";
 $lang->navIcons['bi']        = "<i class='icon icon-statistic'></i>";
 $lang->navIcons['system']    = "<i class='icon icon-group'></i>";
@@ -61,6 +62,7 @@ $lang->mainNav->aiapp     = "{$lang->navIcons['aiapp']} {$lang->aiapp->common}|a
 $lang->mainNav->bi        = "{$lang->navIcons['bi']} {$lang->bi->common}|screen|browse|";
 $lang->mainNav->kanban    = "{$lang->navIcons['kanban']} {$lang->kanban->common}|kanban|space|";
 $lang->mainNav->doc       = "{$lang->navIcons['doc']} {$lang->doc->common}|$docModule|$docMethod|";
+$lang->mainNav->feedback  = "{$lang->navIcons['feedback']} 反馈|feedback|browse|browseType=all";
 $lang->mainNav->system    = "{$lang->navIcons['system']} {$lang->system->common}|my|team|";
 $lang->mainNav->admin     = "{$lang->navIcons['admin']} {$lang->admin->common}|admin|index|";
 
@@ -77,6 +79,7 @@ $lang->mainNav->menuOrder[40] = 'aiapp';
 $lang->mainNav->menuOrder[45] = 'bi';
 $lang->mainNav->menuOrder[50] = 'kanban';
 $lang->mainNav->menuOrder[55] = 'doc';
+$lang->mainNav->menuOrder[57] = 'feedback';
 $lang->mainNav->menuOrder[60] = 'system';
 $lang->mainNav->menuOrder[65] = 'admin';
 
