@@ -1,3 +1,6 @@
 .history-panel-action .avatar {width: 21px !important; height: 21px !important;}
 .history-panel-body .listitem {padding: 0.4rem;}
 .history-panel-action > .item-inner {padding-left: 1.5rem;}
+.history-panel-action-comment .action-reply-quote {padding: 0.5rem 0.75rem; border-left: 3px solid var(--color-border, #d8dee8); background: var(--color-canvas, #f7f8fa);}
+.history-panel-action-comment .action-reply-toolbar {display: flex; justify-content: flex-end;}
+.history-panel-action-comment .action-reply-btn {padding: 0.125rem 0.375rem;}

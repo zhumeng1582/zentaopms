@@ -982,6 +982,15 @@ class actionModel extends model
         $list      = array();
         $endAction = end($actions);
         $account   = $this->app->user->account;
+        $actionMap = array();
+        $floorMap  = array();
+        $floor     = 0;
+        foreach($actions as $action)
+        {
+            $actionMap[$action->id] = $action;
+            $floorMap[$action->id]  = ++$floor;
+        }
+
         foreach($actions as $action)
         {
             $item = new stdClass();
@@ -1015,6 +1024,29 @@ class actionModel extends model
                 $isCurrentUserCreated  = $action->rawActor == $account;
                 $item->comment         = $this->formatActionComment($action->comment);
                 $item->commentEditable = $commentEditable && $endAction->id == $action->id && $isCurrentUserCreated && common::hasPriv('action', 'editComment');
+            }
+
+            if(isset($item->comment) && $action->action === 'commented')
+            {
+                $replyTo = 0;
+                if(preg_match('/^reply=([1-9][0-9]*)$/', (string)$action->extra, $matches)) $replyTo = (int)$matches[1];
+
+                if($replyTo && isset($actionMap[$replyTo]))
+                {
+                    $parent       = $actionMap[$replyTo];
+                    $parentActor  = zget($users, $parent->actor, $parent->actor);
+                    $parentFloor  = zget($floorMap, $replyTo, $replyTo);
+                    $parentText   = trim(html_entity_decode(strip_tags((string)$parent->comment), ENT_QUOTES | ENT_HTML5, 'UTF-8'));
+                    if(mb_strlen($parentText) > 120) $parentText = mb_substr($parentText, 0, 120) . '…';
+                    $quote = sprintf($this->lang->action->replyQuote, $parentFloor, $parentActor, $parentText);
+                    $item->comment = '<div class="action-reply-quote text-gray text-sm mb-2" data-reply-to="' . $replyTo . '">' . htmlspecialchars($quote, ENT_QUOTES, 'UTF-8') . '</div>' . $item->comment;
+                }
+
+                if($commentEditable && common::hasPriv('action', 'comment'))
+                {
+                    $replyUrl = helper::createLink('action', 'comment', "objectType={$action->objectType}&objectID={$action->objectID}&replyTo={$action->id}");
+                    $item->comment .= '<div class="action-reply-toolbar mt-2"><button type="button" class="btn ghost size-sm action-reply-btn" data-toggle="comment" data-url="' . htmlspecialchars($replyUrl, ENT_QUOTES, 'UTF-8') . '"><i class="icon icon-reply"></i> ' . htmlspecialchars($this->lang->action->reply, ENT_QUOTES, 'UTF-8') . '</button></div>';
+                }
             }
 
             if($action->objectType == 'instance' && in_array($action->action, array('adjustmemory', 'adjustcpu', 'adjustvol'))) unset($item->comment);

@@ -604,6 +604,23 @@ class mailModel extends model
         if(!$addressees) return;
         list($toList, $ccList) = $addressees;
 
+        /* Include the referenced comment author in direct-reply emails. */
+        if(preg_match('/^reply=([1-9][0-9]*)$/', (string)$action->extra, $matches))
+        {
+            $parentAction = $this->loadModel('action')->getById((int)$matches[1]);
+            if($parentAction
+                && $parentAction->action === 'commented'
+                && strtolower($parentAction->objectType) === strtolower($action->objectType)
+                && (int)$parentAction->objectID === $objectID
+                && $parentAction->actor !== $action->actor)
+            {
+                $toAccounts = array_filter(explode(',', str_replace(' ', '', $toList)));
+                $ccAccounts = array_filter(explode(',', str_replace(' ', '', $ccList)));
+                if(!in_array($parentAction->actor, $toAccounts) && !in_array($parentAction->actor, $ccAccounts)) $ccAccounts[] = $parentAction->actor;
+                $ccList = implode(',', array_unique($ccAccounts));
+            }
+        }
+
         /* Send it. */
         if($objectType == 'mr')
         {

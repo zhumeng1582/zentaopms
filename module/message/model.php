@@ -209,6 +209,25 @@ class messageModel extends model
         $field  = $this->config->action->objectNameFields[$objectType];
         $object = $this->dao->select('*')->from($table)->where('id')->eq($objectID)->fetch();
         $toList = $this->getToList($object, $objectType, $actionID);
+
+        /* A direct reply must notify the author of the referenced comment. */
+        if($actionID)
+        {
+            $action = $this->action->getById($actionID);
+            if($action && preg_match('/^reply=([1-9][0-9]*)$/', (string)$action->extra, $matches))
+            {
+                $parentAction = $this->action->getById((int)$matches[1]);
+                if($parentAction
+                    && $parentAction->action === 'commented'
+                    && strtolower($parentAction->objectType) === strtolower($objectType)
+                    && (int)$parentAction->objectID === $objectID)
+                {
+                    $toList = trim($toList . ',' . $parentAction->actor, ',');
+                    $toList = implode(',', array_unique(array_filter(explode(',', $toList))));
+                }
+            }
+        }
+
         if(empty($toList) || $toList == $actor) return false;
 
         if(in_array($objectType, array('issue', 'risk', 'opportunity')) && !empty($object->lib)) return false; // 资产库中的数据不发送通知

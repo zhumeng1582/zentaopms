@@ -37,6 +37,8 @@ cid=14877
  - 属性hasRendered @1
  - 属性comment @test
  - 属性commentEditable @0
+- 检查直接回复包含引用楼层。 @1
+- 检查评论包含回复按钮。 @1
 
 */
 
@@ -65,6 +67,11 @@ $actionModel = $tester->loadModel('action');
 $list1 = $actionModel->buildActionList(array());
 $list2 = $actionModel->buildActionList($actions);
 
+$replyActions = array();
+$replyActions[3] = (object)array('id' => 3, 'objectType' => 'task', 'objectID' => 1, 'action' => 'commented', 'actor' => 'user1', 'date' => date('Y-m-d H:i:s'), 'comment' => 'parent comment', 'extra' => '');
+$replyActions[4] = (object)array('id' => 4, 'objectType' => 'task', 'objectID' => 1, 'action' => 'commented', 'actor' => 'admin', 'date' => date('Y-m-d H:i:s'), 'comment' => 'child comment', 'extra' => 'reply=3');
+$replyList = $actionModel->buildActionList($replyActions);
+
 su('user1');
 $list3 = $actionModel->buildActionList($actions);
 $list4 = $actionModel->buildActionList($actions, array(), false);
@@ -80,3 +87,5 @@ r((array)$list2[0]) && p('id,action,hasRendered')                         && e('
 r((array)$list2[1]) && p('id,action,hasRendered,comment,commentEditable') && e('2,edited,1,test,1'); // 传入 actions，检查第二条记录。
 r((array)$list3[1]) && p('id,action,hasRendered,comment,commentEditable') && e('2,edited,1,test,0'); // 切换 user1 账号， 传入 actions，检查第二条记录。
 r((array)$list4[1]) && p('id,action,hasRendered,comment,commentEditable') && e('2,edited,1,test,0'); // 将 commentEditable 参数为 false， 传入 actions，检查第二条记录。
+r((int)str_contains($replyList[1]->comment, '回复 #1'))                  && p() && e('1'); // 检查直接回复包含引用楼层。
+r((int)str_contains($replyList[1]->comment, 'action-reply-btn'))        && p() && e('1'); // 检查评论包含回复按钮。

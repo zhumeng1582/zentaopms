@@ -305,11 +305,26 @@ class action extends control
      *
      * @param  string $objectType
      * @param  int    $objectID
+     * @param  int    $replyTo
      * @access public
      * @return void
      */
-    public function comment(string $objectType, int $objectID)
+    public function comment(string $objectType, int $objectID, int $replyTo = 0)
     {
+        $replyAction = false;
+        if($replyTo)
+        {
+            $replyAction = $this->action->getById($replyTo);
+            if(!$replyAction
+                || $replyAction->action !== 'commented'
+                || strtolower($replyAction->objectType) !== strtolower($objectType)
+                || (int)$replyAction->objectID !== $objectID)
+            {
+                $replyTo     = 0;
+                $replyAction = false;
+            }
+        }
+
         if(!empty($_POST))
         {
             $isInZinPage = isInModal() || in_array($objectType, $this->config->action->newPageModule);
@@ -343,7 +358,8 @@ class action extends control
 
             if($commentData->actioncomment)
             {
-                $actionID = $this->action->create($objectType, $objectID, 'Commented', $commentData->actioncomment);
+                $extra    = $replyTo ? "reply={$replyTo}" : '';
+                $actionID = $this->action->create($objectType, $objectID, 'Commented', $commentData->actioncomment, $extra);
                 if(empty($actionID))
                 {
                     if($isInZinPage) return $this->send(array('result' => 'fail', 'message' => $this->lang->error->accessDenied));
@@ -361,6 +377,13 @@ class action extends control
         $this->view->title      = $this->lang->action->create;
         $this->view->objectType = $objectType;
         $this->view->objectID   = $objectID;
+        $this->view->replyTo    = $replyTo;
+        $this->view->replyAction = $replyAction;
+        if($replyAction)
+        {
+            $replyUser = $this->loadModel('user')->getById($replyAction->actor);
+            $this->view->replyAuthor = $replyUser ? $replyUser->realname : $replyAction->actor;
+        }
         $this->display();
     }
 

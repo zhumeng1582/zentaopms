@@ -18,8 +18,14 @@ set::title($title);
 
 form
 (
-    set::url('action', 'comment', "objectType=$objectType&objectID=$objectID"),
+    set::url('action', 'comment', "objectType=$objectType&objectID=$objectID&replyTo=$replyTo"),
     setClass('comment-form'),
+    $replyAction ? div
+    (
+        setClass('reply-preview surface p-3 mb-3 text-sm'),
+        div(setClass('font-bold mb-1'), sprintf($lang->action->replyingTo, $replyAuthor)),
+        div(setClass('text-gray line-clamp-2'), strip_tags($replyAction->comment))
+    ) : null,
     editor
     (
         set::name('actioncomment')

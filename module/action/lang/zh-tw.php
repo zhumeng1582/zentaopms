@@ -41,6 +41,9 @@ $lang->action->hideOne     = '隱藏';
 $lang->action->hideAll     = '全部隱藏';
 $lang->action->editComment = '修改備註';
 $lang->action->create      = '添加備註';
+$lang->action->reply       = '回覆';
+$lang->action->replyingTo  = '回覆 %s 的評論';
+$lang->action->replyQuote  = '回覆 #%s %s：%s';
 $lang->action->comment     = '備註';
 
 $lang->action->undeleteAction = '還原數據';
